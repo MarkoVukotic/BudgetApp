@@ -16,7 +16,8 @@
                                     <h6>{{$category->name}}</h6>
                                     <label for="spent">Spent: </label>
                                     <div class="progress" style="width: 100%">
-                                        <div class="progress-bar {{$progress_bar_color}}" role="progressbar" style="width: 25%"
+                                        <div class="progress-bar {{$category->progress_bar_color}}"
+                                             role="progressbar" style="width: {{$category->percentage}}%"
                                              aria-valuenow="{{$category->spent}}"
                                              aria-valuemin="0"
                                              aria-valuemax="{{$category->planned}}"></div>

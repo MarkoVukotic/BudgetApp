@@ -29,12 +29,11 @@ class CategoryController extends Controller
     {
         try {
             $categories = Category::all();
-            $progress_bar_color = 'bg-success';
+            $categories = $this->getProgressBarColorForEveryCategory($categories);
+            $categories = json_decode($categories);
 
-            $progress_bar_color = $this->getProgressBarColor($categories);
-
-            return view('categories.index', compact(['categories'], ['progress_bar_color']));
-        }catch (\Exception $exception){
+            return view('categories.index', compact(['categories']));
+        } catch (\Exception $exception) {
             echo $exception->getMessage();
             echo $exception->getLine();
         }
@@ -53,7 +52,7 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreCategoryRequest $request)
@@ -64,7 +63,7 @@ class CategoryController extends Controller
 
             return redirect()->back();
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             echo $exception->getMessage();
             echo $exception->getLine();
         }
@@ -73,7 +72,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function show(Category $category)
@@ -84,7 +83,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function edit(Category $category)
@@ -95,8 +94,8 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Category $category)
@@ -107,7 +106,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function destroy(Category $category)
@@ -120,22 +119,49 @@ class CategoryController extends Controller
 
             return redirect()->back();
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             echo $exception->getMessage();
             echo $exception->getLine();
         }
     }
 
-    private function getProgressBarColor(): string{
+    private function getProgressBarColorForEveryCategory($categories): string
+    {
         try {
+            $categories->each(function ($category) {
+                $percentage = ($category->spent / $category->planned) * 100;
 
+                if ($percentage <= 75) {
+                    $category['progress_bar_color'] = 'bg-success';
+                    return $category;
+                } else if ($percentage <= 100) {
+                    $category['progress_bar_color'] = 'bg-warning';
+                    return $category;
+                } else {
+                    $category['progress_bar_color'] = 'bg-danger';
+                    return $category;
+                }
+            });
 
-            //osmisliti logiku za ovo !
+            return $this->getProgressBarPercentage($categories);
 
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+            echo $exception->getLine();
+        }
+    }
 
+    private function getProgressBarPercentage($categories): string
+    {
+        try {
+            $categories->each(function ($category) {
+                $percentage = ($category->spent / $category->planned) * 100;
+                return $category['percentage'] = $percentage;
+            });
 
+            return $categories;
 
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             echo $exception->getMessage();
             echo $exception->getLine();
         }
