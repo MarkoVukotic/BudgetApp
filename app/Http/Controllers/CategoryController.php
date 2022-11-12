@@ -113,8 +113,6 @@ class CategoryController extends Controller
     {
         try {
 
-            dd($category);
-
             $category->delete();
 
             return redirect()->back();
@@ -130,11 +128,10 @@ class CategoryController extends Controller
         try {
             $categories->each(function ($category) {
                 $percentage = ($category->spent / $category->planned) * 100;
-
                 if ($percentage <= 75) {
                     $category['progress_bar_color'] = 'bg-success';
                     return $category;
-                } else if ($percentage <= 100) {
+                } else if ($percentage < 100) {
                     $category['progress_bar_color'] = 'bg-warning';
                     return $category;
                 } else {
