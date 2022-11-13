@@ -11,7 +11,12 @@
                         <div class="bg-white border p-3 mb-3 text-secondary rounded-4">
                             <div class="row justify-content-center align-items-top">
                                 <div class="col-md-10">
-                                    <h6 align="center" class="mb-3"><b>{{$category->name}}</b></h6>
+
+                                    <h6 align="center" class="mb-3"><b>
+                                            <a href="{{route('category.show', $category->id)}}">{{$category->name}}</a>
+                                        </b>
+                                    </h6>
+
                                     <div class="d-flex justify-content-between ">
                                         <div>
                                             <label for="spent">Planned: </label>
@@ -52,7 +57,7 @@
                                        placeholder="Food, Personal...">
 
                                 <label for="planned">Planned expences</label>
-                                <input type="text" class="form-control" name="planned" id="planned" placeholder="200&euro;">
+                                <input type="number" class="form-control" name="planned" id="planned" placeholder="200&euro;">
                             </div>
                             <button type="submit" class="btn btn-success mt-2">Create category</button>
                         </form>

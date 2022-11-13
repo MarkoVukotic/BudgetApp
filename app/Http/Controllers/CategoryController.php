@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use DebugBar\RequestIdGenerator;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use PHPUnit\Exception;
 
 class CategoryController extends Controller
@@ -23,7 +24,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -42,18 +43,18 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
-        return view('categories.create');
+        abort(404);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StoreCategoryRequest $request)
     {
@@ -72,19 +73,23 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
      */
     public function show(Category $category)
     {
-        //
+        $category = collect([$category]);
+        $category = $this->getProgressBarColorForEveryCategory($category);
+        $category = json_decode($category)[0];
+
+        return view('categories.show', compact(['category']));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
      */
     public function edit(Category $category)
     {
@@ -95,8 +100,8 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
      */
     public function update(Request $request, Category $category)
     {
@@ -106,8 +111,8 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
      */
     public function destroy(Category $category)
     {
@@ -126,7 +131,7 @@ class CategoryController extends Controller
     private function getProgressBarColorForEveryCategory($categories): string
     {
         try {
-            $categories->each(function ($category) {
+            $categories->each(function (&$category) {
                 $percentage = ($category->spent / $category->planned) * 100;
                 if ($percentage <= 75) {
                     $category['progress_bar_color'] = 'bg-success';

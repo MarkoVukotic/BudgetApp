@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\{
-    HomeController,
     CategoryController,
+    ExpensesController,
 };
 
 /*
@@ -24,3 +25,4 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::resource('category', CategoryController::class);
+Route::resource('expenses', ExpensesController::class);
